@@ -10,7 +10,7 @@ pipeline {
   stages{
     stage("Install dependencies"){
       steps {
-        echo "Installing dependencies"
+        sh "node -v"
       }
     }
 
