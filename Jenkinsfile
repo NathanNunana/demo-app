@@ -1,12 +1,20 @@
-def gitName = env.GIT_BRANCH
-def jobName = env.JOB_NAME
-
 pipeline {
   // agent {
   //     label 'jenkins-node-python-agent'
   //   }
   agent any
+
   tools {nodejs "node18"}
+
+  environment{
+    APP_NAME = " login-screen-cicd"
+    RELEASE = "1.0.0"
+    DOCKER_USER = "caleb9083"
+    DOCKER_PASS = "dockerhub"
+    IMAGE_NAME = "${DOCKER_USER}" + "/" + "${APP_NAME}"
+    IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
+  }
+
   stages{
     stage("Install dependencies"){
       steps {
@@ -26,17 +34,22 @@ pipeline {
       }
     }
 
-    stage("Build Image"){
+    stage("Build & Push Image"){
       steps{
-        echo "Building docker image"
+        script{
+          docker.withRegistry("", DOCKER_PASS){
+            docker_image = docker.build "${IMAGE_NAME}"
+          }
+
+          docker.withRegistry("", DOCKER_PASS){
+            docker_image.push($"{IMAGE_TAG}")
+            docker_image.push("latest")
+          }
+        }
       }
     }
 
-    stage("Pushing Image To Registry"){
-      steps{
-        echo "Pushing image to registry"
-      }
-    }
+  
   }
   post {
     always {
