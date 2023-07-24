@@ -1,8 +1,9 @@
 pipeline {
-  agent {
-      label 'jenkins-node-python-agent'
-    }
-
+  // agent {
+  //     label 'jenkins-node-python-agent'
+  //   }
+  agent any
+  
   stages{
     stage("Install dependencies"){
       steps {
