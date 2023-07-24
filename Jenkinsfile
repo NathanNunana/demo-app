@@ -1,9 +1,12 @@
+def gitName = env.GIT_BRANCH
+def jobName = env.JOB_NAME
+
 pipeline {
   // agent {
   //     label 'jenkins-node-python-agent'
   //   }
   agent any
-  
+  tools {nodejs "node18"}
   stages{
     stage("Install dependencies"){
       steps {
